@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "home-automation"
+version = "0.0.0-alpha"
+description = "All the tooling to provision and test my home lab"
+
+license = "MIT"
+
+authors = [
+    "Juan Manuel \"Kang\" Perez <sysadmin@kangmak.es>"
+]
+
+readme = 'README.md'
+
+repository = "https://git.tenshi.es/kang/home-automation"
+homepage = "https://git.tenshi.es/kang/home-automation"
+
+[tool.poetry.dependencies]
+jsonschema = "*"
