@@ -1,11 +1,11 @@
 locals {
     group_names_plain = [
-        for group_filename in fileset("${local.inventory_path}/group_vars", "*.yaml"):
+        for group_filename in fileset("${var.inventory}/group_vars", "*.yaml"):
             regex("(.*)\\.yaml", group_filename)[0]
         if (length(regexall("\\.sops\\.yaml", group_filename)) == 0)
     ]
     group_names_crypted = [
-        for group_filename in fileset("${local.inventory_path}/group_vars", "*.sops.yaml"):
+        for group_filename in fileset("${var.inventory}/group_vars", "*.sops.yaml"):
             regexall("(.*)\\.sops\\.yaml", group_filename)[0][0]
     ]
     group_names = toset(concat(local.group_names_plain, local.group_names_crypted))
@@ -14,13 +14,13 @@ locals {
 
 data sops_file group_decrypter {
     for_each    = toset(local.group_names_crypted)
-    source_file = "${local.inventory_path}/group_vars/${each.value}.sops.yaml"
+    source_file = "${var.inventory}/group_vars/${each.value}.sops.yaml"
 }
 
 locals {
     groupvars_plain = {
         for group_name in local.group_names_plain:
-            group_name => yamldecode(file("${local.inventory_path}/group_vars/${group_name}.yaml"))
+            group_name => yamldecode(file("${var.inventory}/group_vars/${group_name}.yaml"))
     }
     groupvars_decrypted = {
         for group_name in local.group_names_crypted:

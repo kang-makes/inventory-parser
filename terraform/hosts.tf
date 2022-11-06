@@ -1,11 +1,11 @@
 locals {
     host_names_plain = [
-        for host_filename in fileset("${local.inventory_path}/host_vars", "*.yaml"):
+        for host_filename in fileset("${var.inventory}/host_vars", "*.yaml"):
             regex("(.*)\\.yaml", host_filename)[0]
         if (length(regexall("\\.sops\\.yaml", host_filename)) == 0)
     ]
     host_names_crypted = [
-        for host_filename in fileset("${local.inventory_path}/host_vars", "*.sops.yaml"):
+        for host_filename in fileset("${var.inventory}/host_vars", "*.sops.yaml"):
             regexall("(.*)\\.sops\\.yaml", host_filename)[0][0]
     ]
     host_names = toset(concat(local.host_names_plain, local.host_names_crypted))
@@ -14,13 +14,13 @@ locals {
 
 data sops_file host_decrypter {
     for_each    = toset(local.host_names_crypted)
-    source_file = "${local.inventory_path}/host_vars/${each.value}.sops.yaml"
+    source_file = "${var.inventory}/host_vars/${each.value}.sops.yaml"
 }
 
 locals {
     hostvars_plain = {
         for host_name in local.host_names_plain:
-            host_name => yamldecode(file("${local.inventory_path}/host_vars/${host_name}.yaml"))
+            host_name => yamldecode(file("${var.inventory}/host_vars/${host_name}.yaml"))
     }
     hostvars_decrypted = {
         for host_name in local.host_names_crypted:

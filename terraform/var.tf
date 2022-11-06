@@ -4,5 +4,5 @@ variable inventory {
     The inventory should comply the scehema provided in this repository.
     EOF
     type = string
-    default = "inventory"
+    default = "../inventory"
 }
